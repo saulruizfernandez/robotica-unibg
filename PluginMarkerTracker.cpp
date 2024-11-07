@@ -102,8 +102,8 @@ class PluginMarkerTracker : public TargetTrackerInterface {
 
 	void setOdometry(double px, double py, double oz, double vx, double vy, double wz) {
 
-		if (current_marker_id.compare("NULL") && vx ==0 && vy == 0){
-			std::cout<<"TRAJECTORY DONE"<<std::endl;
+		if (!first_marker && vx == 0 && vy == 0) {
+			std::cout<<"Odometry : TRAJECTORY DONE"<<std::endl;
 			trajectory_done = true;
 		}
 
@@ -115,7 +115,7 @@ class PluginMarkerTracker : public TargetTrackerInterface {
 
 		if (status == 0)
 		{
-			std::cout<<"TRAJECTORY DONE"<<std::endl;
+			std::cout<<"Navigation Status : TRAJECTORY DONE"<<std::endl;
 			trajectory_done = true;
 		}
 	}
@@ -127,8 +127,10 @@ class PluginMarkerTracker : public TargetTrackerInterface {
 		SceneTransform* robot2marker = NULL;
 		for (int i = 0; i< objects.size(); i++ ){
 			if (objects[i].type.compare("marker") == 0 && current_marker_id.compare(objects[i].id) != 0){
+
 				double distanceTemp = sqrt(objects[i].rototras.tra[0] * objects[i].rototras.tra[0] + objects[i].rototras.tra[1] * objects[i].rototras.tra[1]);
 				std::cout<<"Marker "<<objects[i].id<<" distance "<<distanceTemp<<std::endl;
+
 				if (distanceTemp <= minimiun){
 					minimiun = distanceTemp;
 					idTemp = objects[i].id;
@@ -137,6 +139,11 @@ class PluginMarkerTracker : public TargetTrackerInterface {
 					robot2marker -> tra[0] = objects[i].rototras.tra[0];
 					robot2marker -> tra[1] = objects[i].rototras.tra[1];
 					robot2marker -> tra[2] = objects[i].rototras.tra[2];
+
+					/*double qx, qy, qz, qw;
+					objects[i].rototras.getQuaternion(qx, qy, qz, qw);
+
+					robot2marker -> setQuaternion(qx, qy, qz, qw);*/
 				}
 			}
 		}
@@ -147,8 +154,9 @@ class PluginMarkerTracker : public TargetTrackerInterface {
 			*robot_to_marker = *robot2marker; // The first target
 			current_marker_id = idTemp;
 		}else if (robot2marker != NULL){
-			std::cout<<"NEXT TARGET FOUND: " << idTemp <<std::endl;
+			std::cout<<"NEXT TARGET FOUND: " << idTemp <<" -- Yaw: "<< robot2marker-> getYaw()<<std::endl;
 			*next_robot_to_marker = *robot2marker;
+			next_robot_to_marker_id = idTemp;
 		}
 
 		if (robot2marker != nullptr) delete robot2marker;
@@ -212,6 +220,7 @@ class PluginMarkerTracker : public TargetTrackerInterface {
 			target = *next_robot_to_marker;
 			*robot_to_marker = *next_robot_to_marker;
 			trajectory_done = false;
+			current_marker_id = next_robot_to_marker_id;
 		}else if (first_marker == true)
 		{
 			target = *robot_to_marker;
@@ -230,6 +239,7 @@ class PluginMarkerTracker : public TargetTrackerInterface {
 
   private:
 	std::string current_marker_id;
+	std::string next_robot_to_marker_id;
 	bool first_marker;
 	bool trajectory_done;
 	SceneTransform* robot_to_marker;
