@@ -91,19 +91,19 @@ public:
 		params.maxThreshold = 200;
 
 		params.filterByColor = true;
-		params.blobColor = 0;
+		params.blobColor = 255;
 
 		// Filter by Area.
 		params.filterByArea = true;
 		params.minArea = 150;
 
 		// Filter by Circularity
-		params.filterByCircularity = true;
-		params.minCircularity = 0.01;
+		params.filterByCircularity = false;
+		params.minCircularity = 0.785;
 
 		// Filter by Convexity
-		params.filterByConvexity = false;
-		params.minConvexity = 0.87;
+		params.filterByConvexity = true;
+		params.minConvexity = 0.00;
 
 		// Filter by Inertia
 		params.filterByInertia = false;
@@ -134,6 +134,12 @@ public:
 		cv::Mat ycrcb_image, y_channel_stretched, y_channel_enhanced, enhanced_ycrcb_image, enhanced_image;
 		cv::Mat ycrcb_channels[3];
 		vector<Mat> channels;
+
+		cv::GaussianBlur(image, image, Size(5, 5), 1);
+
+		/*cv::dilate( image, image, Mat());
+		cv::erode( image, image, Mat());*/
+
 		cv::cvtColor(image, ycrcb_image, COLOR_BGR2YCrCb);
 		cv::split(ycrcb_image, ycrcb_channels);
 
@@ -150,48 +156,33 @@ public:
 		image = enhanced_image;
 	}
 
+	void colorFilter(cv::Mat &frame){
+
+		Mat mask, output_image;
+
+		cv::inRange(frame, cv::Scalar(0, 0, 0),
+				                        cv::Scalar(80, 60, 60), mask);
+
+		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
+		cv::bitwise_and(whiteImage, whiteImage, output_image, mask);
+
+		imshow( "Color filter", output_image );
+		frame = output_image;
+	}
+
 
 	bool detectMarkers(cv::Mat &frame, std::vector<int> &ids, std::vector<SceneTransform> &poses) {
 		std::cout << "[PluginMarkerDetectorArrows]::detectMarkers()" << std::endl;
 
-		Mat hsv, mask, output_image;
+		Mat output_image;
 
-		blobDetection(frame);
 		enhaceImageQuality(frame);
-
-		cv::cvtColor(frame, hsv, COLOR_BGR2HSV);
-
-		//Method 1: Detect darkness by splitting into hsv channels
-		/*
-		std::vector<Mat> hsv_channels(3);
-		cv::split(hsv, hsv_channels);
-		Mat value_channel = hsv_channels[2];
-
-		cv::inRange(value_channel, 0, 100, mask);
-		frame.copyTo(output_image, mask);
-		*/
-
-		//Method 2: Detect color by range of BGR value
-
-		/*Mat kernel = cv::getStructuringElement( MORPH_RECT,
-		                       Size( 5, 5 ));*/
-
-		cv::inRange(frame, cv::Scalar(0, 0, 100),
-		                        cv::Scalar(30, 50, 255), mask);
-
-		// cv::dilate(mask,mask,kernel);
-
-		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
-
-		cv::bitwise_and(whiteImage, whiteImage, output_image, mask);
-
-		//blobDetection(output_image);
-
-		imshow( "Color filter", output_image );
-
+		colorFilter(frame);
+		blobDetection(frame);
 
 		// ENHANCE IMAGE QUALITY
 
+		output_image =frame;
 
 		Mat edges;
 	//	Canny( src_gray, edges, thresh, thresh*2 );
