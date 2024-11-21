@@ -78,31 +78,120 @@ public:
 
 //	RNG rng(12345);
 
+	void blobDetection(cv::Mat &im){
+		Mat im_with_keypoints,gray_image;
+
+		cv::cvtColor(im, gray_image, COLOR_BGR2GRAY);
+
+		std::vector<KeyPoint> keypoints;
+
+		cv::SimpleBlobDetector::Params params;
+		// Change thresholds
+		params.minThreshold = 10;
+		params.maxThreshold = 200;
+
+		params.filterByColor = true;
+		params.blobColor = 0;
+
+		// Filter by Area.
+		params.filterByArea = true;
+		params.minArea = 150;
+
+		// Filter by Circularity
+		params.filterByCircularity = true;
+		params.minCircularity = 0.01;
+
+		// Filter by Convexity
+		params.filterByConvexity = false;
+		params.minConvexity = 0.87;
+
+		// Filter by Inertia
+		params.filterByInertia = false;
+		params.minInertiaRatio = 0.00;
+
+	#if CV_MAJOR_VERSION < 3   // If you are using OpenCV 2
+
+		// Set up detector with params
+		SimpleBlobDetector detector(params);
+
+		// Detect blobs
+		detector.detect(gray_image, keypoints);
+	#else
+
+		// Set up detector with params
+		Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
+
+		// Detect blobs
+		detector->detect(gray_image, keypoints);
+	#endif
+
+		drawKeypoints( gray_image, keypoints, im_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+
+		imshow("keypoints", im_with_keypoints );// Show blobs
+	}
+
+	void enhaceImageQuality(cv::Mat &image) {
+		cv::Mat ycrcb_image, y_channel_stretched, y_channel_enhanced, enhanced_ycrcb_image, enhanced_image;
+		cv::Mat ycrcb_channels[3];
+		vector<Mat> channels;
+		cv::cvtColor(image, ycrcb_image, COLOR_BGR2YCrCb);
+		cv::split(ycrcb_image, ycrcb_channels);
+
+		cv::normalize(ycrcb_channels[0], y_channel_stretched, 0, 255, NORM_MINMAX);
+		cv::equalizeHist(y_channel_stretched, y_channel_enhanced);
+		ycrcb_channels[0] = y_channel_enhanced;
+
+		channels.push_back(ycrcb_channels[0]);
+		channels.push_back(ycrcb_channels[1]);
+		channels.push_back(ycrcb_channels[2]);
+		cv::merge(channels, enhanced_ycrcb_image);
+		cv::cvtColor(enhanced_ycrcb_image, enhanced_image, COLOR_YCrCb2BGR);
+		imshow("Enhanced Image", enhanced_image );
+		image = enhanced_image;
+	}
+
 
 	bool detectMarkers(cv::Mat &frame, std::vector<int> &ids, std::vector<SceneTransform> &poses) {
 		std::cout << "[PluginMarkerDetectorArrows]::detectMarkers()" << std::endl;
 
 		Mat hsv, mask, output_image;
 
+		blobDetection(frame);
+		enhaceImageQuality(frame);
+
 		cv::cvtColor(frame, hsv, COLOR_BGR2HSV);
 
 		//Method 1: Detect darkness by splitting into hsv channels
-
+		/*
 		std::vector<Mat> hsv_channels(3);
 		cv::split(hsv, hsv_channels);
 		Mat value_channel = hsv_channels[2];
 
 		cv::inRange(value_channel, 0, 100, mask);
 		frame.copyTo(output_image, mask);
+		*/
 
 		//Method 2: Detect color by range of BGR value
-		/*
-		cv::inRange(hsv, cv::Scalar(0, 0, 0),
-		                        cv::Scalar(120, 120, 120), mask);
 
-		cv::bitwise_and(frame, frame, output_image, mask);
-		*/
-		imshow( "Black filter", output_image );
+		/*Mat kernel = cv::getStructuringElement( MORPH_RECT,
+		                       Size( 5, 5 ));*/
+
+		cv::inRange(frame, cv::Scalar(0, 0, 100),
+		                        cv::Scalar(30, 50, 255), mask);
+
+		// cv::dilate(mask,mask,kernel);
+
+		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
+
+		cv::bitwise_and(whiteImage, whiteImage, output_image, mask);
+
+		//blobDetection(output_image);
+
+		imshow( "Color filter", output_image );
+
+
+		// ENHANCE IMAGE QUALITY
+
 
 		Mat edges;
 	//	Canny( src_gray, edges, thresh, thresh*2 );
