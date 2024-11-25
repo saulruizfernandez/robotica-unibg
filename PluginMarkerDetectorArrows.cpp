@@ -156,12 +156,28 @@ public:
 		image = enhanced_image;
 	}
 
+	void colorQuantization(cv::Mat &image){
+		/*int height = image.rows;
+		int width = image.cols;
+
+		cv::cvtColor(image, lab_image, COLOR_BGR2LAB);
+		lab_image.reshape(3, height * width);
+		Mat labels;
+		std::vector<Point2f> centers; // 2D vector of float values
+		cv::kmeans(lab_image, 10, labels, );*/
+
+	}
+
 	void colorFilter(cv::Mat &frame){
 
 		Mat mask, output_image;
 
-		cv::inRange(frame, cv::Scalar(0, 0, 0),
-				                        cv::Scalar(80, 60, 60), mask);
+		//BGR
+		/*cv::inRange(frame, cv::Scalar(0, 0, 0),
+				                        cv::Scalar(80, 60, 60), mask);*/
+
+		cv::inRange(frame, cv::Scalar(0, 0, 80),
+						                        cv::Scalar(10, 20, 255), mask);
 
 		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
 		cv::bitwise_and(whiteImage, whiteImage, output_image, mask);
@@ -170,6 +186,9 @@ public:
 		frame = output_image;
 	}
 
+	void arrowDetection(cv::Mat &frame){
+
+	}
 
 	bool detectMarkers(cv::Mat &frame, std::vector<int> &ids, std::vector<SceneTransform> &poses) {
 		std::cout << "[PluginMarkerDetectorArrows]::detectMarkers()" << std::endl;
@@ -178,9 +197,8 @@ public:
 
 		enhaceImageQuality(frame);
 		colorFilter(frame);
-		blobDetection(frame);
-
-		// ENHANCE IMAGE QUALITY
+		//blobDetection(frame);
+		arrowDetection(frame);
 
 		output_image =frame;
 
@@ -194,6 +212,7 @@ public:
 		vector<vector<Point> > contours;
 		vector<Vec4i> hierarchy;
 		findContours( edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
+		std::cout<<"Contour size: "<<contours.size()<<std::endl;
 		Mat drawing = Mat::zeros( edges.size(), CV_8UC3 );
 		for( size_t i = 0; i< contours.size(); i++ ) {
 			Scalar color = Scalar( 105, 105, 255 );
