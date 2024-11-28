@@ -155,30 +155,32 @@ public:
 		imshow("Enhanced Image", enhanced_image );
 		image = enhanced_image;
 	}
-
+/*
 	void colorQuantization(cv::Mat &image){
-		/*int height = image.rows;
+		int height = image.rows;
 		int width = image.cols;
 
 		cv::cvtColor(image, lab_image, COLOR_BGR2LAB);
 		lab_image.reshape(3, height * width);
 		Mat labels;
 		std::vector<Point2f> centers; // 2D vector of float values
-		cv::kmeans(lab_image, 10, labels, );*/
+		cv::kmeans(lab_image, 10, labels, TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0), 3, KMEANS_PP_CENTERS, centers);
 
-	}
+
+
+	}*/
 
 	void colorFilter(cv::Mat &frame){
 
 		Mat mask, output_image;
 
 		//BGR
-		/*cv::inRange(frame, cv::Scalar(0, 0, 0),
-				                        cv::Scalar(80, 60, 60), mask);*/
-
+		cv::inRange(frame, cv::Scalar(0, 0, 0),
+				                      cv::Scalar(80, 60, 60), mask);
+        /*
 		cv::inRange(frame, cv::Scalar(0, 0, 80),
 						                        cv::Scalar(10, 20, 255), mask);
-
+        */
 		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
 		cv::bitwise_and(whiteImage, whiteImage, output_image, mask);
 
@@ -187,6 +189,87 @@ public:
 	}
 
 	void arrowDetection(cv::Mat &frame){
+
+		Mat edges, output_image;
+
+		//	Canny( src_gray, edges, thresh, thresh*2 );
+		cv::Canny(frame, edges, 50, 200, 3);
+
+		/*
+		 * Contour detection
+		 */
+		vector<pair<Point, Point>>  arrow_vector;
+		vector<vector<Point> > contours, approx;
+		vector<Vec4i> hierarchy;
+		findContours( edges, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE );
+		Mat drawing = Mat::zeros( edges.size(), CV_8UC3 );
+
+		for( size_t i = 0; i< contours.size(); i++ ) {
+			vector<Point> tempApprox, hull;
+			double epsilon = cv::arcLength(contours[i], true) * 0.02;
+
+			cv::approxPolyDP(contours[i], tempApprox, epsilon, true);
+			if (tempApprox.size() == 7) {
+
+				cv::convexHull(tempApprox, hull, true);
+
+				if (7 - hull.size() == 2) { // It is an arrow, two inner points in the convex hull of 5 sides
+
+					double max1 =0; double max2 = 0;
+					std::pair<int, int> segment1, segment2;
+
+					for (size_t y = 0; y < hull.size(); y++){
+
+						cv::circle( drawing, hull[y], 10, (255,255,255), -1); // Show keypoints
+
+						double distance = cv::norm(hull[(y+1)%5] - hull[(y)]);
+						if (distance > max1 || distance > max2)
+						{
+							max2 = max1;
+							max1 = distance;
+
+							segment2 = segment1;
+							segment1 = make_pair(y, (y+1)%5);
+						}
+					}
+					int tip_index;
+					if((segment1.second + 2)% 5 == segment2.first) { // Find the tip of the arrow
+						tip_index = (segment1.second + 1) % 5;
+
+					}else if ((segment2.second + 2)% 5 == segment1.first){
+						tip_index = (segment2.second + 1)% 5;
+
+					}
+
+					// Calculate the first point of the vector that points to the direction of the tip
+					Point point1 = hull[(tip_index + 2) % 5];
+					Point point2 = hull[(tip_index + 3) % 5];
+
+					// Point middle_point
+					Point middle_point((point1.x + point2.x)/2, (point1.y + point2.y)/2);
+
+					arrow_vector.push_back({hull[tip_index], middle_point});
+					approx.push_back(tempApprox);
+				}
+			}
+		}
+
+
+		for( size_t i = 0; i< approx.size(); i++ ) {
+			Scalar color = Scalar( 105, 105, 255 );
+			drawContours( drawing, approx, (int)i, color, 2, LINE_8, hierarchy, 0 );
+		}
+
+		std::cout<<">>>>Tips: "<<arrow_vector.size()<<std::endl;
+
+		for( size_t i = 0; i< arrow_vector.size(); i++ ) {
+			Scalar color = Scalar( 255, 0, 255 );
+			// cv::circle( drawing, arrow_vector[i].first, 5, color, -1);
+			cv::arrowedLine(drawing, arrow_vector[i].second, arrow_vector[i].first, color, 2);
+
+		}
+		imshow( "Polygon approximation", drawing );
+
 
 	}
 
@@ -213,6 +296,7 @@ public:
 		vector<Vec4i> hierarchy;
 		findContours( edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
 		std::cout<<"Contour size: "<<contours.size()<<std::endl;
+
 		Mat drawing = Mat::zeros( edges.size(), CV_8UC3 );
 		for( size_t i = 0; i< contours.size(); i++ ) {
 			Scalar color = Scalar( 105, 105, 255 );
