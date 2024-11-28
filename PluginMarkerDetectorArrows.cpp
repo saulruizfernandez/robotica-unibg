@@ -135,10 +135,7 @@ public:
 		cv::Mat ycrcb_channels[3];
 		vector<Mat> channels;
 
-		cv::GaussianBlur(image, image, Size(5, 5), 1);
-
-		/*cv::dilate( image, image, Mat());
-		cv::erode( image, image, Mat());*/
+		//cv::GaussianBlur(image, image, Size(5, 5), 1);
 
 		cv::cvtColor(image, ycrcb_image, COLOR_BGR2YCrCb);
 		cv::split(ycrcb_image, ycrcb_channels);
@@ -152,35 +149,48 @@ public:
 		channels.push_back(ycrcb_channels[2]);
 		cv::merge(channels, enhanced_ycrcb_image);
 		cv::cvtColor(enhanced_ycrcb_image, enhanced_image, COLOR_YCrCb2BGR);
-		imshow("Enhanced Image", enhanced_image );
+		//imshow("Enhanced Image", enhanced_image );
 		image = enhanced_image;
 	}
-/*
+
 	void colorQuantization(cv::Mat &image){
-		int height = image.rows;
-		int width = image.cols;
+		Mat data;
+		image.convertTo(data, CV_32F); // Convert to float32
+		data = data.reshape(1, data.total());
+		Mat labels, centers;
+		int k = 8; // Color number
+		cv::kmeans(data, k, labels, TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 10, 1.0), 3, KMEANS_PP_CENTERS, centers);
+		centers = centers.reshape(3,centers.rows);
+		data = data.reshape(3,data.rows);
 
-		cv::cvtColor(image, lab_image, COLOR_BGR2LAB);
-		lab_image.reshape(3, height * width);
-		Mat labels;
-		std::vector<Point2f> centers; // 2D vector of float values
-		cv::kmeans(lab_image, 10, labels, TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0), 3, KMEANS_PP_CENTERS, centers);
+		Vec3f *p = data.ptr<Vec3f>();
+		for (size_t i=0; i<data.rows; i++) {
+		   int center_id = labels.at<int>(i);
+		   p[i] = centers.at<Vec3f>(center_id);
+		}
 
+		image = data.reshape(3, image.rows);
+		image.convertTo(image, CV_8U);
 
+		imshow("Color Quantization", image );
 
-	}*/
+	}
 
 	void colorFilter(cv::Mat &frame){
 
 		Mat mask, output_image;
 
 		//BGR
+//		cv::inRange(frame, cv::Scalar(0, 0, 0),
+//				                      cv::Scalar(80, 60, 60), mask);
+
 		cv::inRange(frame, cv::Scalar(0, 0, 0),
-				                      cv::Scalar(80, 60, 60), mask);
+						                      cv::Scalar(128, 128, 128), mask);
         /*
 		cv::inRange(frame, cv::Scalar(0, 0, 80),
 						                        cv::Scalar(10, 20, 255), mask);
         */
+
 		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
 		cv::bitwise_and(whiteImage, whiteImage, output_image, mask);
 
@@ -193,7 +203,7 @@ public:
 		Mat edges, output_image;
 
 		//	Canny( src_gray, edges, thresh, thresh*2 );
-		cv::Canny(frame, edges, 50, 200, 3);
+		cv::Canny(frame, edges, 50, 200, 3, true);
 
 		/*
 		 * Contour detection
@@ -206,9 +216,16 @@ public:
 
 		for( size_t i = 0; i< contours.size(); i++ ) {
 			vector<Point> tempApprox, hull;
-			double epsilon = cv::arcLength(contours[i], true) * 0.02;
+			double perimeter = cv::arcLength(contours[i], true);
+
+			if (perimeter <= 50){
+				continue;
+			}
+
+			double epsilon =  perimeter * 0.02;
 
 			cv::approxPolyDP(contours[i], tempApprox, epsilon, true);
+
 			if (tempApprox.size() == 7) {
 
 				cv::convexHull(tempApprox, hull, true);
@@ -279,53 +296,54 @@ public:
 		Mat output_image;
 
 		enhaceImageQuality(frame);
+		colorQuantization(frame);
 		colorFilter(frame);
 		//blobDetection(frame);
 		arrowDetection(frame);
 
 		output_image =frame;
 
-		Mat edges;
-	//	Canny( src_gray, edges, thresh, thresh*2 );
-		cv::Canny(output_image, edges, 50, 200, 3);
-
-		/*
-		 * Contour detection
-		 */
-		vector<vector<Point> > contours;
-		vector<Vec4i> hierarchy;
-		findContours( edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
-		std::cout<<"Contour size: "<<contours.size()<<std::endl;
-
-		Mat drawing = Mat::zeros( edges.size(), CV_8UC3 );
-		for( size_t i = 0; i< contours.size(); i++ ) {
-			Scalar color = Scalar( 105, 105, 255 );
-//			Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
-			drawContours( drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0 );
-		}
-		imshow( "Contours", drawing );
-
-
-		/*
-		 * Line detection
-		 * https://stackoverflow.com/questions/32476410/opencv-c-line-detection-with-houghlinesp
-		 */
-		// Copy edges to the images that will display the results in BGR
-		cv::Mat edges_color, edges_image;
-		cv::cvtColor(edges, edges_color, cv::COLOR_GRAY2BGR);
-		edges_image = edges_color.clone();
-
-
-		// Probabilistic Line Transform
-		std::vector<Vec4i> linesP; // will hold the results of the detection
-		HoughLinesP(edges, linesP, 1, CV_PI/180, 25, 15, 3 ); // runs the actual detection
-		// Draw the lines
-		for( size_t i = 0; i < linesP.size(); i++ ) {
-			Vec4i l = linesP[i];
-			line( edges_image, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 1, LINE_AA);
-		}
-
-	    cv::imshow("global edges", edges_image);
+//		Mat edges;
+//	//	Canny( src_gray, edges, thresh, thresh*2 );
+//		cv::Canny(output_image, edges, 50, 200, 3);
+//
+//		/*
+//		 * Contour detection
+//		 */
+//		vector<vector<Point> > contours;
+//		vector<Vec4i> hierarchy;
+//		findContours( edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
+//		std::cout<<"Contour size: "<<contours.size()<<std::endl;
+//
+//		Mat drawing = Mat::zeros( edges.size(), CV_8UC3 );
+//		for( size_t i = 0; i< contours.size(); i++ ) {
+//			Scalar color = Scalar( 105, 105, 255 );
+////			Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
+//			drawContours( drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0 );
+//		}
+//		imshow( "Contours", drawing );
+//
+//
+//		/*
+//		 * Line detection
+//		 * https://stackoverflow.com/questions/32476410/opencv-c-line-detection-with-houghlinesp
+//		 */
+//		// Copy edges to the images that will display the results in BGR
+//		cv::Mat edges_color, edges_image;
+//		cv::cvtColor(edges, edges_color, cv::COLOR_GRAY2BGR);
+//		edges_image = edges_color.clone();
+//
+//
+//		// Probabilistic Line Transform
+//		std::vector<Vec4i> linesP; // will hold the results of the detection
+//		HoughLinesP(edges, linesP, 1, CV_PI/180, 25, 15, 3 ); // runs the actual detection
+//		// Draw the lines
+//		for( size_t i = 0; i < linesP.size(); i++ ) {
+//			Vec4i l = linesP[i];
+//			line( edges_image, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 1, LINE_AA);
+//		}
+//
+//	    cv::imshow("global edges", edges_image);
 	    cv::waitKey(60);
 
 
