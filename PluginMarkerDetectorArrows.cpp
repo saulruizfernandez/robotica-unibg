@@ -58,6 +58,7 @@
 #include "opencv2/imgproc.hpp"
 
 #include <iostream>
+#include <math.h>
 
 using namespace stresa;
 using namespace cv;
@@ -131,6 +132,7 @@ public:
 	}
 
 	void enhaceImageQuality(cv::Mat &image) {
+	/*
 		cv::Mat ycrcb_image, y_channel_stretched, y_channel_enhanced, enhanced_ycrcb_image, enhanced_image;
 		cv::Mat ycrcb_channels[3];
 		vector<Mat> channels;
@@ -149,8 +151,15 @@ public:
 		channels.push_back(ycrcb_channels[2]);
 		cv::merge(channels, enhanced_ycrcb_image);
 		cv::cvtColor(enhanced_ycrcb_image, enhanced_image, COLOR_YCrCb2BGR);
-		//imshow("Enhanced Image", enhanced_image );
-		image = enhanced_image;
+        */
+        
+        	// Apply bilateral filtering, for smoothing image, reduce noise, while preserving the borders
+        	cv::Mat enhanced_image1, enhanced_image2;
+        	cv::convertScaleAbs(image, enhanced_image1, 2, 10);
+        	cv::bilateralFilter(enhanced_image1, enhanced_image2, 15, 75, 75);
+        	
+		imshow("Enhanced Image", enhanced_image2 );
+		image = enhanced_image2;
 	}
 
 	void colorQuantization(cv::Mat &image){
@@ -185,7 +194,7 @@ public:
 //				                      cv::Scalar(80, 60, 60), mask);
 
 		cv::inRange(frame, cv::Scalar(0, 0, 0),
-						                      cv::Scalar(128, 128, 128), mask);
+						                      cv::Scalar(80, 50, 50), mask);
         /*
 		cv::inRange(frame, cv::Scalar(0, 0, 80),
 						                        cv::Scalar(10, 20, 255), mask);
@@ -198,7 +207,7 @@ public:
 		frame = output_image;
 	}
 
-	void arrowDetection(cv::Mat &frame){
+	void arrowDetection(cv::Mat &frame, std::vector<SceneTransform>& poses){
 
 		Mat edges, output_image;
 
@@ -264,9 +273,49 @@ public:
 
 					// Point middle_point
 					Point middle_point((point1.x + point2.x)/2, (point1.y + point2.y)/2);
-
+					
+					// Add new arrow vector
 					arrow_vector.push_back({hull[tip_index], middle_point});
+					
 					approx.push_back(tempApprox);
+					
+					// Calculate the center of the arrow
+					Point center_of_arrow;
+					Point point_tip = hull[tip_index];
+					Point point3 = hull[(tip_index + 1) % 5];
+					Point point4 = hull[(tip_index + 4) % 5];
+					
+					// Represent lines as ax + by = c
+					double a1 = point_tip.y - middle_point.y;
+					double b1 = middle_point.x - point_tip.x;
+					double c1 = a1 * (middle_point.x) + b1 * (middle_point.y);
+					
+					double a2 = point4.y - point3.y;
+					double b2 = point3.x - point4.x;
+					double c2 = a2 * (point3.x) + b2 * (point3.y);
+					
+					if ((a1 * b2 - a2 * b1) != 0) { // determinant != 0
+						center_of_arrow.x = (b2*c1 - b1*c2) / (a1 * b2 - a2 * b1);
+						center_of_arrow.y = (a1*c2 - a2*c1) / (a1 * b2 - a2 * b1);
+						// Draw circle in the intersection point
+						cv::circle(drawing, center_of_arrow, 10, Scalar(230, 237, 21), -1);
+					}
+					
+					// Calculate size of marker (height and width)
+					double height = sqrt((middle_point.x - point_tip.x) * (middle_point.x - point_tip.x) + (middle_point.y - point_tip.y) * (middle_point.y - point_tip.y));
+					double width = sqrt((point3.x - point4.x) * (point3.x - point4.x) + (point3.y - point4.y) * (point3.y - point4.y));
+					
+					std::cout << "SIZE OF MARKER:\n";
+					std::cout << "height: " << height << ", width: " << width << std::endl;
+					
+					// Calculate orientation of marker (yaw -> positive clockwise)
+					double slope_arrow_vector = -(a1 / b1);
+					double slope_horizontal_line = 0;
+					
+					double yaw_arrow = (atan(fabs((slope_arrow_vector - slope_horizontal_line) / (1 + slope_arrow_vector * slope_horizontal_line))) * 180) / M_PI;
+					std::cout << "orientation: " << yaw_arrow << "\n";
+					
+					
 				}
 			}
 		}
@@ -296,10 +345,10 @@ public:
 		Mat output_image;
 
 		enhaceImageQuality(frame);
-		colorQuantization(frame);
+		// colorQuantization(frame);
 		colorFilter(frame);
 		//blobDetection(frame);
-		arrowDetection(frame);
+		arrowDetection(frame, poses);
 
 		output_image =frame;
 
