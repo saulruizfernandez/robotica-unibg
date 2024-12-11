@@ -193,13 +193,13 @@ public:
 		//BGR
 //		cv::inRange(frame, cv::Scalar(0, 0, 0),
 //				                      cv::Scalar(80, 60, 60), mask);
-
-		cv::inRange(frame, cv::Scalar(0, 0, 0),
-						                      cv::Scalar(128, 128, 128), mask);
-        /*
-		cv::inRange(frame, cv::Scalar(0, 0, 80),
-						                        cv::Scalar(10, 20, 255), mask);
-        */
+		//Black Filter
+		/*cv::inRange(frame, cv::Scalar(0, 0, 0),
+						                      cv::Scalar(128, 128, 128), mask);*/
+        //Green Filter
+		cv::inRange(frame, cv::Scalar(0, 0, 160),
+						                        cv::Scalar(123, 123, 255), mask);
+        
 
 		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
 		cv::bitwise_and(whiteImage, whiteImage, output_image, mask);
@@ -265,16 +265,21 @@ public:
 				
 				std::set_difference(indexes_tempApprox.begin(), indexes_tempApprox.end(), hull.begin(), hull.end(), std::inserter(indexes, indexes.begin()));
 								
-				std::cout << "indexes: " << indexes[0] << ", " << indexes[1] << "\n"; 
+				std::cout << "indexes: " << indexes[0] << ", " << indexes[1] << "\n";
+				
+				cv::circle(drawing, tempApprox[indexes[0]], 4, Scalar( 255, 0, 0 ), -1);
+				cv::circle(drawing, tempApprox[indexes[1]], 4, Scalar( 255, 0, 0 ), -1);
 				
 				std::cout << "pong2\n";
 				int tip_index = -1;
-				for (int i{0}; i < 2; ++i) {
-					int x = (indexes[i] + 2) % hull.size();
-					int j = (indexes[(i+1)%2] - 2) < 0 ?  (hull.size() - abs(indexes[(i+1)%2]  - 2) % hull.size()) : (indexes[(i+1)%2] - 2);
+				for (int it{0}; it < 2; ++it) {
+					// int x = (indexes[it] + 2) % hull.size();
+					int x = (indexes[it] + 2) % tempApprox.size();
+					//int j = (indexes[(it+1)%2] - 2) < 0 ?  (hull.size() - abs(indexes[(it+1)%2]  - 2) % hull.size()) : (indexes[(it+1)%2] - 2);
+					int j = ((indexes[(it + 1) % 2] - 2) < 0)? (tempApprox.size() + (indexes[(it + 1) % 2] - 2)) : (indexes[(it + 1) % 2] - 2);
 					std::cout << "X: "<<x<<", J:"<<j<<"\n";
 					if (j == x){
-						tip_index = j;
+						tip_index = j;						
 					}
 				}
 				if (tip_index == -1){
@@ -282,17 +287,24 @@ public:
 					continue;
 				}
 				std::cout << "pong3\n";
-
-				// Calculate the first point of the vector that points to the direction of the tip
-				Point point1 = tempApprox[hull[(tip_index + 2) % 5]];
-				Point point2 = tempApprox[hull[(tip_index + 3) % 5]];
-
+				
 				// Point middle_point
-				Point middle_point((point1.x + point2.x)/2, (point1.y + point2.y)/2);
+				Point middle_point;
+				if (hull.size() == 5){
+					// Calculate the first point of the vector that points to the direction of the tip
+					Point point1 = tempApprox[(tip_index + 3) % tempApprox.size()];
+					Point point2 = tempApprox[(tip_index + 4) % tempApprox.size()];
+	
+					// Point middle_point
+					middle_point.x = (point1.x + point2.x)/2;
+					middle_point.y = (point1.y + point2.y)/2;
+				}else {
+					middle_point = tempApprox[(tip_index + 3) % tempApprox.size()];
+				}
 				std::cout << "pong4\n";					
 				
 				// Add new arrow vector
-				arrow_vector.push_back({tempApprox[hull[tip_index]], middle_point});
+				arrow_vector.push_back({tempApprox[tip_index], middle_point});
 				std::cout << "pong5\n";	
 				
 				approx.push_back(tempApprox);
@@ -300,9 +312,9 @@ public:
 				
 				// Calculate the center of the arrow
 				Point center_of_arrow;
-				Point point_tip = tempApprox[hull[tip_index]];
-				Point point3 = tempApprox[hull[(tip_index + 1) % 5]];
-				Point point4 = tempApprox[hull[(tip_index + 4) % 5]];
+				Point point_tip = tempApprox[tip_index];
+				Point point3 = tempApprox[(tip_index + 1) % tempApprox.size()];
+				Point point4 = tempApprox[(tip_index + 5) % tempApprox.size()];
 				
 				// Represent lines as ax + by = c
 				double a1 = point_tip.y - middle_point.y;
