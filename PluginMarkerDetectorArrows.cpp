@@ -198,7 +198,7 @@ public:
 						                      cv::Scalar(128, 128, 128), mask);*/
         //Green Filter
 		cv::inRange(frame, cv::Scalar(0, 0, 160),
-						                        cv::Scalar(123, 123, 255), mask);
+						                        cv::Scalar(160, 123, 255), mask);
         
 
 		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
@@ -208,7 +208,7 @@ public:
 		frame = output_image;
 	}
 
-	void arrowDetection(cv::Mat &frame, std::vector<SceneTransform>& poses){
+	void arrowDetection(cv::Mat &frame, std::vector<aurora::perception::VisualObject3D> &objects){
 		std::cout << ">>>>>>>> ARROW DETECTION\n";
 		Mat edges, output_image;
 
@@ -340,9 +340,13 @@ public:
 				std::cout << "height: " << height << ", width: " << width << std::endl;
 				
 				// Calculate orientation of marker (yaw -> positive clockwise)
-				double slope_arrow_vector = -(a1 / b1);
+				double slope_arrow_vector = (a1 / b1);
 				
-				double yaw_arrow = (atan(fabs(slope_arrow_vector)) * 180) / M_PI;
+				//double yaw_arrow = (atan(fabs(slope_arrow_vector)) * 180) / M_PI;
+				double yaw_arrow = -1 * atan2(point_tip.y - middle_point.y, point_tip.x - middle_point.x)* 180 / M_PI;
+				if (yaw_arrow < 0){
+					yaw_arrow = 360 + yaw_arrow;
+				}
 				std::cout << "orientation: " << yaw_arrow << "\n";
 			}
 		}
@@ -366,7 +370,7 @@ public:
 
 	}
 
-	bool detectMarkers(cv::Mat &frame, std::vector<int> &ids, std::vector<SceneTransform> &poses) {
+	bool detectMarkers(cv::Mat &frame, std::vector<aurora::perception::VisualObject3D> &objects) {
 		std::cout << "[PluginMarkerDetectorArrows]::detectMarkers()" << std::endl;
 
 		Mat output_image;
@@ -375,7 +379,7 @@ public:
 		// colorQuantization(frame);
 		colorFilter(frame);
 		//blobDetection(frame);
-		arrowDetection(frame, poses);
+		arrowDetection(frame, objects);
 
 		output_image =frame;
 
