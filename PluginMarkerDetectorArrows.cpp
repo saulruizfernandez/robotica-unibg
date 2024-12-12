@@ -314,7 +314,7 @@ public:
 				Point center_of_arrow;
 				Point point_tip = tempApprox[tip_index];
 				Point point3 = tempApprox[(tip_index + 1) % tempApprox.size()];
-				Point point4 = tempApprox[(tip_index + 5) % tempApprox.size()];
+				Point point4 = tempApprox[(tip_index + 6) % tempApprox.size()];
 				
 				// Represent lines as ax + by = c
 				double a1 = point_tip.y - middle_point.y;
@@ -329,15 +329,35 @@ public:
 					center_of_arrow.x = (b2*c1 - b1*c2) / (a1 * b2 - a2 * b1);
 					center_of_arrow.y = (a1*c2 - a2*c1) / (a1 * b2 - a2 * b1);
 					// Draw circle in the intersection point
-					cv::circle(drawing, center_of_arrow, 10, Scalar(230, 237, 21), -1);
+					cv::circle(drawing, center_of_arrow, 4, Scalar(230, 237, 21), -1);
 				}
 				
-				// Calculate size of marker (height and width)
-				double height = sqrt((middle_point.x - point_tip.x) * (middle_point.x - point_tip.x) + (middle_point.y - point_tip.y) * (middle_point.y - point_tip.y));
+				// Calculate the intersection to check if it is an arrow
+				Point point5 = tempApprox[(tip_index + 2) % tempApprox.size()];
+				Point point6 = tempApprox[(tip_index + 5) % tempApprox.size()];
+				
+				double a3 = point6.y - point5.y;
+				double b3 = point5.x - point6.x;
+				double c3 = a3 * (point5.x) + b3 * (point5.y);
+				
+				Point intersection_check;
+				
+				if ((a1 * b3 - a3 * b1) != 0) { // determinant != 0
+					intersection_check.x = (b3*c1 - b1*c3) / (a1 * b3 - a3 * b1);
+					intersection_check.y = (a1*c3 - a3*c1) / (a1 * b3 - a3 * b1);
+					// Draw circle in the intersection point
+					cv::circle(drawing, intersection_check, 4, Scalar(0, 237, 21), -1);
+				}
+				
+				// Calculate size of marker (depth and width)
+				double depth = sqrt((middle_point.x - point_tip.x) * (middle_point.x - point_tip.x) + (middle_point.y - point_tip.y) * (middle_point.y - point_tip.y));
 				double width = sqrt((point3.x - point4.x) * (point3.x - point4.x) + (point3.y - point4.y) * (point3.y - point4.y));
 				
 				std::cout << "SIZE OF MARKER:\n";
-				std::cout << "height: " << height << ", width: " << width << std::endl;
+				std::cout << "depth: " << depth << ", width: " << width << std::endl;
+				
+			    // Calculate distance between center and intersection_check and see if it is in a threshold
+				if (cv::norm(center_of_arrow - intersection_check)) > (depth * 0.1)) continue;
 				
 				// Calculate orientation of marker (yaw -> positive clockwise)
 				double slope_arrow_vector = (a1 / b1);
@@ -348,6 +368,18 @@ public:
 					yaw_arrow = 360 + yaw_arrow;
 				}
 				std::cout << "orientation: " << yaw_arrow << "\n";
+				
+				aurora::perception::VisualObject3D tempObject;
+				
+				tempObject.width = width;
+				tempObject.depth = depth;		
+				tempObject.height = 0;	
+				
+				tempObject.rototras.setTranslation(center_of_arrow.x, center_of_arrow.y, 0);
+				tempObject.rototras.setRPY(0, 0, yaw_arrow * M_PI / 180);
+				
+				objects.push_back(tempObject);
+				
 			}
 		}
 		std::cout << "pong\n";
