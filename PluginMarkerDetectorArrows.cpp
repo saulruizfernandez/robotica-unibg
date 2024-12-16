@@ -236,13 +236,13 @@ public:
 		vector<vector<Point> > contours, approx;
 		vector<Vec4i> hierarchy;
 		findContours( edges, contours, hierarchy, RETR_EXTERNAL , CHAIN_APPROX_SIMPLE );
-		
+		/*
 		for( size_t i = 0; i< contours.size(); i++ ) {
 			Scalar color = Scalar( 105, 105, 255 );
 //			Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
 			drawContours( drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0 );
 		}
-
+		*/
 		for( size_t i = 0; i< contours.size(); i++ ) {
 			std::cout << "ping\n";
 			vector<Point> tempApprox;
@@ -395,12 +395,12 @@ public:
 			}
 		}
 		std::cout << "pong\n";
-
+		
 		for( size_t i = 0; i< approx.size(); i++ ) {
 			Scalar color = Scalar( 105, 105, 255 );
 			drawContours( drawing, approx, (int)i, color, 2, LINE_8, hierarchy, 0 );
 		}
-
+		
 		std::cout<<">>>>Tips: "<<arrow_vector.size()<<std::endl;
 
 		for( size_t i = 0; i< arrow_vector.size(); i++ ) {
