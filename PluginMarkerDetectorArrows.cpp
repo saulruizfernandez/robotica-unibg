@@ -156,11 +156,22 @@ public:
         
         	// Apply bilateral filtering, for smoothing image, reduce noise, while preserving the borders
         	cv::Mat enhanced_image1, enhanced_image2;
-        	cv::convertScaleAbs(image, enhanced_image1, 2, 10);
+        	//cv::convertScaleAbs(image, enhanced_image1, 2, 10);
+		std::cout << "[PluginMarkerDetectorArrows] enhaceImageQuality 1" << std::endl;
+		enhanced_image1 = image;
+		cv::cvtColor(enhanced_image1, enhanced_image1, COLOR_BGRA2BGR);
+		
+		// Checking...
+		std::cout << enhanced_image1.type() << std::endl;
+		std::cout << enhanced_image2.type() << std::endl;
+		
         	cv::bilateralFilter(enhanced_image1, enhanced_image2, 15, 75, 75);
+		std::cout << "[PluginMarkerDetectorArrows] enhaceImageQuality 2" << std::endl;        	
         	
 		imshow("Enhanced Image", enhanced_image2 );
 		image = enhanced_image2;
+
+		
 	}
 
 	void colorQuantization(cv::Mat &image){
@@ -198,7 +209,7 @@ public:
 						                      cv::Scalar(128, 128, 128), mask);*/
         //Green Filter
 		cv::inRange(frame, cv::Scalar(0, 0, 160),
-						                        cv::Scalar(160, 123, 255), mask);
+						                        cv::Scalar(140, 140, 255), mask);
         
 
 		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
@@ -302,9 +313,6 @@ public:
 					middle_point = tempApprox[(tip_index + 3) % tempApprox.size()];
 				}
 				std::cout << "pong4\n";					
-				
-				// Add new arrow vector
-				arrow_vector.push_back({tempApprox[tip_index], middle_point});
 				std::cout << "pong5\n";	
 				
 				approx.push_back(tempApprox);
@@ -357,7 +365,8 @@ public:
 				std::cout << "depth: " << depth << ", width: " << width << std::endl;
 				
 			    // Calculate distance between center and intersection_check and see if it is in a threshold
-				if (cv::norm(center_of_arrow - intersection_check)) > (depth * 0.1)) continue;
+//***				if (cv::norm(center_of_arrow - intersection_check)) > (depth * 0.1)) continue;
+				if (cv::norm(center_of_arrow - intersection_check) > (depth * 0.25)) continue;
 				
 				// Calculate orientation of marker (yaw -> positive clockwise)
 				double slope_arrow_vector = (a1 / b1);
@@ -368,6 +377,9 @@ public:
 					yaw_arrow = 360 + yaw_arrow;
 				}
 				std::cout << "orientation: " << yaw_arrow << "\n";
+				
+				// Add new arrow vector
+				arrow_vector.push_back({tempApprox[tip_index], middle_point});
 				
 				aurora::perception::VisualObject3D tempObject;
 				
@@ -408,12 +420,14 @@ public:
 		Mat output_image;
 
 		enhaceImageQuality(frame);
+				
 		// colorQuantization(frame);
 		colorFilter(frame);
+				
 		//blobDetection(frame);
 		arrowDetection(frame, objects);
-
-		output_image =frame;
+		
+		output_image = frame;
 
 //		Mat edges;
 //	//	Canny( src_gray, edges, thresh, thresh*2 );
@@ -456,7 +470,7 @@ public:
 //		}
 //
 //	    cv::imshow("global edges", edges_image);
-	    cv::waitKey(60);
+//	    cv::waitKey(60);
 
 
 		return true;
