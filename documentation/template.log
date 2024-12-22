@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.12.22)  22 DEC 2024 17:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.12.22)  22 DEC 2024 18:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -559,7 +559,7 @@ File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
 )
 \@quotelevel=\count418
 \@quotereset=\count419
-LaTeX Font Info:    Trying to load font information for T1+pplx on input line 86.
+LaTeX Font Info:    Trying to load font information for T1+pplx on input line 88.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pplx.fd
 File: t1pplx.fd 2004/09/06 font definitions for T1/pplx.
 ) (./template.aux
@@ -578,24 +578,24 @@ LaTeX Warning: Label `fig:tcanther' multiply defined.
 )
 \openout1 = `template.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
  (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count420
@@ -650,18 +650,18 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \big@size=\dimen189
-LaTeX Info: Redefining \microtypecontext on input line 86.
-Package microtype Info: Applying patch `item' on input line 86.
-Package microtype Info: Applying patch `toc' on input line 86.
-Package microtype Info: Applying patch `eqnum' on input line 86.
-Package microtype Info: Applying patch `footnote' on input line 86.
+LaTeX Info: Redefining \microtypecontext on input line 88.
+Package microtype Info: Applying patch `item' on input line 88.
+Package microtype Info: Applying patch `toc' on input line 88.
+Package microtype Info: Applying patch `eqnum' on input line 88.
+Package microtype Info: Applying patch `footnote' on input line 88.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 86.
+LaTeX Info: Redefining \showhyphens on input line 88.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -681,13 +681,13 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'template.bbl' found.
  (./template.bbl)
-Package biblatex Info: Reference section=0 on input line 86.
-Package biblatex Info: Reference segment=0 on input line 86.
+Package biblatex Info: Reference section=0 on input line 88.
+Package biblatex Info: Reference segment=0 on input line 88.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 86.
+Package hyperref Info: Link coloring ON on input line 88.
  (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
  (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
@@ -697,31 +697,31 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count426
 )
-LaTeX Info: Redefining \ref on input line 86.
-LaTeX Info: Redefining \pageref on input line 86.
-LaTeX Info: Redefining \nameref on input line 86.
+LaTeX Info: Redefining \ref on input line 88.
+LaTeX Info: Redefining \pageref on input line 88.
+LaTeX Info: Redefining \nameref on input line 88.
  (./template.out) (./template.out)
 \@outlinefile=\write4
 \openout4 = `template.out'.
 
 \c@lstlisting=\count427
-LaTeX Font Info:    Trying to load font information for OT1+pplx on input line 89.
+LaTeX Font Info:    Trying to load font information for OT1+pplx on input line 91.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pplx.fd
 File: ot1pplx.fd 2004/09/06 font definitions for OT1/pplx.
 )
-LaTeX Font Info:    Trying to load font information for OML+zplm on input line 89.
+LaTeX Font Info:    Trying to load font information for OML+zplm on input line 91.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlzplm.fd
 File: omlzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OML/zplm.
 )
-LaTeX Font Info:    Trying to load font information for OMS+zplm on input line 89.
+LaTeX Font Info:    Trying to load font information for OMS+zplm on input line 91.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omszplm.fd
 File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 )
-LaTeX Font Info:    Trying to load font information for OMX+zplm on input line 89.
+LaTeX Font Info:    Trying to load font information for OMX+zplm on input line 91.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omxzplm.fd
 File: omxzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMX/zplm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+zplm on input line 89.
+LaTeX Font Info:    Trying to load font information for OT1+zplm on input line 91.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1zplm.fd
 File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 )
@@ -729,30 +729,64 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zplm' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-LaTeX Font Info:    Trying to load font information for TS1+pplx on input line 100.
+LaTeX Font Info:    Trying to load font information for TS1+pplx on input line 102.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1pplx.fd
 File: ts1pplx.fd 2004/09/06 font definitions for TS1/pplx.
 )
 <Figures//original.png, id=72, 951.555pt x 572.1375pt>
 File: Figures//original.png Graphic file (type png)
 <use Figures//original.png>
-Package pdftex.def Info: Figures//original.png  used on input line 110.
+Package pdftex.def Info: Figures//original.png  used on input line 119.
 (pdftex.def)             Requested size: 231.84843pt x 139.4023pt.
 <Figures//enhanced.png, id=74, 958.58125pt x 575.14874pt>
 File: Figures//enhanced.png Graphic file (type png)
 <use Figures//enhanced.png>
-Package pdftex.def Info: Figures//enhanced.png  used on input line 116.
+Package pdftex.def Info: Figures//enhanced.png  used on input line 122.
 (pdftex.def)             Requested size: 231.84843pt x 139.10042pt.
+<Figures//filter.png, id=75, 951.555pt x 570.13pt>
+File: Figures//filter.png Graphic file (type png)
+<use Figures//filter.png>
+Package pdftex.def Info: Figures//filter.png  used on input line 127.
+(pdftex.def)             Requested size: 231.84843pt x 138.91316pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
  <./Figures//original.png> <./Figures//enhanced.png>]
-<Figures//filter.png, id=87, 951.555pt x 570.13pt>
-File: Figures//filter.png Graphic file (type png)
-<use Figures//filter.png>
-Package pdftex.def Info: Figures//filter.png  used on input line 129.
-(pdftex.def)             Requested size: 231.84843pt x 138.91316pt.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 140.
+<Figures//contour.png, id=87, 960.58875pt x 571.13374pt>
+File: Figures//contour.png Graphic file (type png)
+<use Figures//contour.png>
+Package pdftex.def Info: Figures//contour.png  used on input line 137.
+(pdftex.def)             Requested size: 231.84843pt x 137.8418pt.
+
+Underfull \hbox (badness 5316) in paragraph at lines 135--141
+[]\T1/pplx/m/n/10 (+20) Find the con-tours of the ar-rows based
+ []
+
+
+Underfull \hbox (badness 1622) in paragraph at lines 135--141
+\T1/pplx/m/n/10 (+20) on the re-trieved edges from the pre-vi-ous
+ []
+
+<Figures//flecha1.png, id=88, 127.47626pt x 233.87375pt>
+File: Figures//flecha1.png Graphic file (type png)
+<use Figures//flecha1.png>
+Package pdftex.def Info: Figures//flecha1.png  used on input line 148.
+(pdftex.def)             Requested size: 77.54643pt x 142.26378pt.
+<Figures//flecha2.png, id=89, 126.4725pt x 190.7125pt>
+File: Figures//flecha2.png Graphic file (type png)
+<use Figures//flecha2.png>
+Package pdftex.def Info: Figures//flecha2.png  used on input line 155.
+(pdftex.def)             Requested size: 94.34659pt x 142.26378pt.
+[2 <./Figures//filter.png> <./Figures//contour.png> <./Figures//flecha1.png> <./Figures//flecha2.png>]
+<Figures//flecha3.png, id=114, 158.5925pt x 233.87375pt>
+File: Figures//flecha3.png Graphic file (type png)
+<use Figures//flecha3.png>
+Package pdftex.def Info: Figures//flecha3.png  used on input line 172.
+(pdftex.def)             Requested size: 96.47507pt x 142.26378pt.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 179.
  (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
@@ -760,49 +794,44 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `cmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-<Figures//contour.png, id=88, 960.58875pt x 571.13374pt>
-File: Figures//contour.png Graphic file (type png)
-<use Figures//contour.png>
-Package pdftex.def Info: Figures//contour.png  used on input line 148.
-(pdftex.def)             Requested size: 231.84843pt x 137.8418pt.
- [2 <./Figures//filter.png> <./Figures//contour.png>]
-<Figures//Tolmukapea.jpg, id=110, 616.704pt x 448.5558pt>
+ [3 <./Figures//flecha3.png>]
+<Figures//Tolmukapea.jpg, id=134, 616.704pt x 448.5558pt>
 File: Figures//Tolmukapea.jpg Graphic file (type jpg)
 <use Figures//Tolmukapea.jpg>
-Package pdftex.def Info: Figures//Tolmukapea.jpg  used on input line 234.
+Package pdftex.def Info: Figures//Tolmukapea.jpg  used on input line 267.
 (pdftex.def)             Requested size: 231.84843pt x 168.63235pt.
-<Figures//Fibroblastid.jpg, id=114, 2569.6pt x 1328.965pt>
+<Figures//Fibroblastid.jpg, id=138, 2569.6pt x 1328.965pt>
 File: Figures//Fibroblastid.jpg Graphic file (type jpg)
 <use Figures//Fibroblastid.jpg>
-Package pdftex.def Info: Figures//Fibroblastid.jpg  used on input line 244.
+Package pdftex.def Info: Figures//Fibroblastid.jpg  used on input line 277.
 (pdftex.def)             Requested size: 483.69687pt x 250.15369pt.
- [3 <./Figures//Tolmukapea.jpg>] [4 <./Figures//Fibroblastid.jpg>]
+ [4 <./Figures//Tolmukapea.jpg>] [5 <./Figures//Fibroblastid.jpg>]
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/pplx/m/sc/10'.
 (microtype)             Ignoring protrusion settings for this character.
- [5] (./template.aux)
+ [6] (./template.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `template.out' has not changed.
-(rerunfilecheck)             Checksum: 1AF00DDCE63CD9821F9DCBE75375FAEE;2429.
+(rerunfilecheck)             Checksum: A7B35C3E34F339CFB6FF598A97F779EB;2429.
 Package logreq Info: Writing requests to 'template.run.xml'.
 \openout1 = `template.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 23021 strings out of 480247
- 397280 string characters out of 5896150
- 1127881 words of memory out of 5000000
- 40235 multiletter control sequences out of 15000+600000
- 544195 words of font info for 362 fonts, out of 8000000 for 9000
+ 23070 strings out of 480247
+ 398068 string characters out of 5896150
+ 1128881 words of memory out of 5000000
+ 40258 multiletter control sequences out of 15000+600000
+ 544641 words of font info for 368 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,11n,82p,1103b,1689s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt0900.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on template.pdf (5 pages, 3514500 bytes).
+Output written on template.pdf (6 pages, 3532971 bytes).
 PDF statistics:
- 189 PDF objects out of 1000 (max. 8388607)
- 156 compressed objects within 2 object streams
- 43 named destinations out of 1000 (max. 500000)
- 113831 words of extra memory for PDF output out of 128383 (max. 10000000)
+ 215 PDF objects out of 1000 (max. 8388607)
+ 175 compressed objects within 2 object streams
+ 58 named destinations out of 1000 (max. 500000)
+ 113846 words of extra memory for PDF output out of 128383 (max. 10000000)
 

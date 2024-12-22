@@ -1,14 +1,14 @@
 # Fdb version 3
-["biber template"] 1734887812 "template.bcf" "template.bbl" "template" 1734887863
+["biber template"] 1734891011 "template.bcf" "template.bbl" "template" 1734891574
   "sample.bib" 1734878734 423 bb4d4040f48aec7c0bc550ef99e007d4 ""
-  "template.bcf" 1734887863 106456 37d7fe4474d5ca03f7633def9df5ea80 "pdflatex"
+  "template.bcf" 1734891574 106456 37d7fe4474d5ca03f7633def9df5ea80 "pdflatex"
   (generated)
   "template.bbl"
   "template.blg"
-["pdflatex"] 1734887862 "/home/saul/Documents/ingenieria_informatica/TERCERO_CARRERA/robotica/robotica-unibg/documentation/template.tex" "template.pdf" "template" 1734887863
+["pdflatex"] 1734891573 "/home/saul/Documents/ingenieria_informatica/TERCERO_CARRERA/robotica/robotica-unibg/documentation/template.tex" "template.pdf" "template" 1734891574
   "/etc/texmf/web2c/texmf.cnf" 1734861764 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/saul/.texlive2021/texmf-var/web2c/pdftex/pdflatex.fmt" 1734878076 1405651 579b02746e43687f8072cbea1da4b26a ""
-  "/home/saul/Documents/ingenieria_informatica/TERCERO_CARRERA/robotica/robotica-unibg/documentation/template.tex" 1734887862 19537 5a885ac872886dbccc9733a2122db991 ""
+  "/home/saul/Documents/ingenieria_informatica/TERCERO_CARRERA/robotica/robotica-unibg/documentation/template.tex" 1734891571 22604 9a147bba2c5998e252b49d3071eff39e ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm" 1136768653 2532 9ad73cf4dd2173a847f2a5f5608e0b9a ""
@@ -142,13 +142,16 @@
   "Figures//contour.png" 1734882969 8243 a1571dd8ab3f52c3b40d95fd470a563b ""
   "Figures//enhanced.png" 1734883015 359020 53f191b809af8e6b10da34b10903217b ""
   "Figures//filter.png" 1734883174 8319 b451f19e2887e8dc406b444b8a656b93 ""
+  "Figures//flecha1.png" 1734888463 4655 d05fb269a1d4cb8adc667d350aec1934 ""
+  "Figures//flecha2.png" 1734888454 6708 80d18d02f85852f526c537433a487ce3 ""
+  "Figures//flecha3.png" 1734888472 5684 5ab92ad4c3bd51e2d9f2dc50b52c89ee ""
   "Figures//original.png" 1734883080 788145 6ebd0aeae882f3714cef8fc39db14dee ""
   "LTJournalArticle.cls" 1734878689 9784 e38e4f05326438c9cfb0a6c6bf9f0764 ""
-  "template.aux" 1734887863 6218 a4ca1a2e3bc925703b836474d1790a65 "pdflatex"
-  "template.bbl" 1734887812 3199 985b69af5beeb44be6a586f575026aae "biber template"
-  "template.out" 1734887863 2429 1af00ddce63cd9821f9dcbe75375faee "pdflatex"
-  "template.run.xml" 1734887863 2329 dd0b28ad5248dccc56c9d3651d0f9aad "pdflatex"
-  "template.tex" 1734887862 19537 5a885ac872886dbccc9733a2122db991 ""
+  "template.aux" 1734891574 6728 9321aaacf7d66e9a1879594252a10ac3 "pdflatex"
+  "template.bbl" 1734891011 3199 985b69af5beeb44be6a586f575026aae "biber template"
+  "template.out" 1734891574 2429 a7b35c3e34f339cfb6ff598a97f779eb "pdflatex"
+  "template.run.xml" 1734891574 2329 dd0b28ad5248dccc56c9d3651d0f9aad "pdflatex"
+  "template.tex" 1734891571 22604 9a147bba2c5998e252b49d3071eff39e ""
   (generated)
   "template.aux"
   "template.bcf"

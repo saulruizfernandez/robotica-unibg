@@ -27,6 +27,8 @@
 	twoside, % Two side traditional mode where headers and footers change between odd and even pages, comment this option to make them fixed
 ]{LTJournalArticle}
 
+\usepackage{enumitem}
+
 \usepackage{listings}
 \usepackage{color}
 
@@ -106,18 +108,6 @@ The key assumptions will be:
 \subsubsection{Enhance image quality}
 The aim of this step is to reduce noise by smoothing colours, but without blurring the edges. For this we use the cv::bilateralFilter from OpenCV. A previous transformation of the colour codification is required in order to be able to use the method from the library.
 
-\begin{figure} % Single column figure
-	\includegraphics[width=\linewidth]{original.png}
-	\caption{Frame retrieved by the camera without processing}
-	\label{fig:tcanther}
-\end{figure}
-
-\begin{figure} % Single column figure
-	\includegraphics[width=\linewidth]{enhanced.png}
-	\caption{Frame after applying bilateralFilter}
-	\label{fig:tcanther}
-\end{figure}
-
 \subsubsection{Apply colour filter}
 In this step we eliminate all the colors of the image except from the arrow's one. As we will be only detecting arrows of a specific colour. We will define a mask (cv::Mat)  that consists of a binary matrix of the same dimensions of the frame.
 
@@ -126,15 +116,64 @@ Cells set to 1 will correspond to those within a color range (where the color of
 We multiply (bitwise\_and operation) both of them and the result will be a pure black and white matrix, where the background will be black (0, 0, 0) and the arrow white.
 
 \begin{figure} % Single column figure
+	\includegraphics[width=\linewidth]{original.png}
+	\caption{Frame retrieved by the camera without processing}
+  \vspace{0.5cm}
+  \includegraphics[width=\linewidth]{enhanced.png}
+	\caption{Frame after applying bilateralFilter}
+\end{figure}
+
+\begin{figure} % Single column figure
 	\includegraphics[width=\linewidth]{filter.png}
 	\caption{Pure black and white image after applying the mask}
-	\label{fig:tcanther}
 \end{figure}
 
 \subsection{Algorithm for detecting arrows}
 The algorithm for arrow detection in the frames can be decomposed in the following steps:
 \begin{enumerate}
 	\item Detect the edges with Canny out of the pure black and white filtered image (Figure 4).
+  \item Find the contours of the arrows based on the retrieved edges from the previous step. Taking only the external ones in order to avoid detecting more than once the same arrow (RETR\_EXTERNAL). Parameter CHAIN\_APPROX\_SIMPLE compresses horizontal, vertical, and diagonal segments and leaves only their end points.
+  \begin{figure} % Single column figure
+    \includegraphics[width=\linewidth]{contour.png}
+    \caption{Contours calculated out of edge detection}
+    \label{fig:tcanther}
+  \end{figure}
+  \item From this step onwards each contour will be processed as a potential arrow…
+  \item Out of the contour (vector of 2D coordinates) we calculate the approximate polygon containing all its key points (corners of the arrows).
+  \item The convex hull is obtained out of the approximate polygon, as a list of the indexes that form the convex hull.
+  \item 1st ARROW CONDITION CHECK (Figures 4 and 5): convex hull contains 5 points (for the first type of arrow), or convex hull contains 4 points (for the second type of arrow). Also, the approximated polygon must have exactly two more points than the convex hull, as is a condition that is always verified for all types of arrows.
+  
+  \begin{figure} % Single column figure
+    \centering
+    \includegraphics[height=5cm, keepaspectratio]{flecha1.png}
+    \caption{Key points and convex hull of 1st type of arrow}
+    \label{fig:tcanther}
+  \end{figure}
+
+  \begin{figure} % Single column figure
+    \centering
+    \includegraphics[height=5cm, keepaspectratio]{flecha2.png}
+    \caption{Key points and convex hull of 2nd type of arrow}
+    \label{fig:tcanther}
+  \end{figure}
+
+  \item Identify the indexes of the two inner points of the arrow (those excluded from the convex hull) in the vector of points that form the approximated polygon.
+  \item Find the tip of the arrow / 2nd ARROW CONDITION CHECK: once we have the indexes of the two inner points, and based on the fact that both of them will be at distance 2 from the tip (inside the vector of points that form the approximated polygon), we can do the following checking to compute the tip:   
+  \begin{enumerate}[label*=\arabic*.]
+    \item Sum 2 to the index of the first of the two points; subtract 2 from the index of the second point. If the index is the same, then it will be the index of the tip.
+    \item If the indexes are not the same, we will subtract 2 to the index of the first of the two points; sum 2 to the index of the second point. If the index is the same, it will be the index of the tip.
+    \item If none of the conditions are satisfied, it means that the figure is not an arrow.  
+  \end{enumerate}
+  \item We get the two bottom points of the arrow simply by adding 3 and 4 to the index of the tip in the approximated polygon list of points. Then, we calculate the middle point of them (for the case of the second type of arrow).
+  \item With all these calculations, we have obtained the coordinates of the tip and of the bottom of the arrow, so we can build a vector (figure 6) from which we can calculate the size of the arrow, its center and its orientation.
+    
+  \begin{figure} % Single column figure
+    \centering
+    \includegraphics[height=5cm, keepaspectratio]{flecha3.png}
+    \caption{Arrow vector and the two points that define it}
+    \label{fig:tcanther}
+  \end{figure}
+
 \end{enumerate}
 
 \begin{lstlisting}
@@ -143,12 +182,6 @@ The algorithm for arrow detection in the frames can be decomposed in the followi
   do something
   }
 \end{lstlisting}
-
-\begin{figure} % Single column figure
-	\includegraphics[width=\linewidth]{contour.png}
-	\caption{Pure black and white image after applying the mask}
-	\label{fig:tcanther}
-\end{figure}
 
 %------------------------------------------------
 
