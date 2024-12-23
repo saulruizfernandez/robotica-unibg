@@ -74,6 +74,13 @@ public:
 	PluginMarkerDetectorArrows() {
 		registerProperty(marker_size, "MarkerSize");
 		registerProperty(show_marker, "ShowMarker");
+		
+		registerProperty(marker_red_min, "MarkerRedMin");
+		registerProperty(marker_red_max, "MarkerRedMax");
+		registerProperty(marker_green_min, "MarkerGreenMin");
+		registerProperty(marker_green_max, "MarkerGreenMax");
+		registerProperty(marker_blue_min, "MarkerBlueMin");
+		registerProperty(marker_blue_max, "MarkerBlueMax");
 	}
 	void setup() {
 	}
@@ -133,40 +140,13 @@ public:
 	}
 
 	void enhaceImageQuality(cv::Mat &image) {
-	/*
-		cv::Mat ycrcb_image, y_channel_stretched, y_channel_enhanced, enhanced_ycrcb_image, enhanced_image;
-		cv::Mat ycrcb_channels[3];
-		vector<Mat> channels;
-
-		//cv::GaussianBlur(image, image, Size(5, 5), 1);
-
-		cv::cvtColor(image, ycrcb_image, COLOR_BGR2YCrCb);
-		cv::split(ycrcb_image, ycrcb_channels);
-
-		cv::normalize(ycrcb_channels[0], y_channel_stretched, 0, 255, NORM_MINMAX);
-		cv::equalizeHist(y_channel_stretched, y_channel_enhanced);
-		ycrcb_channels[0] = y_channel_enhanced;
-
-		channels.push_back(ycrcb_channels[0]);
-		channels.push_back(ycrcb_channels[1]);
-		channels.push_back(ycrcb_channels[2]);
-		cv::merge(channels, enhanced_ycrcb_image);
-		cv::cvtColor(enhanced_ycrcb_image, enhanced_image, COLOR_YCrCb2BGR);
-        */
-        
         	// Apply bilateral filtering, for smoothing image, reduce noise, while preserving the borders
         	cv::Mat enhanced_image1, enhanced_image2;
         	//cv::convertScaleAbs(image, enhanced_image1, 2, 10);
-		std::cout << "[PluginMarkerDetectorArrows] enhaceImageQuality 1" << std::endl;
 		enhanced_image1 = image;
 		cv::cvtColor(enhanced_image1, enhanced_image1, COLOR_BGRA2BGR);
-		
-		// Checking...
-		std::cout << enhanced_image1.type() << std::endl;
-		std::cout << enhanced_image2.type() << std::endl;
-		
+			
         	cv::bilateralFilter(enhanced_image1, enhanced_image2, 15, 75, 75);
-		std::cout << "[PluginMarkerDetectorArrows] enhaceImageQuality 2" << std::endl;        	
         	
 		imshow("Enhanced Image", enhanced_image2 );
 		image = enhanced_image2;
@@ -207,9 +187,9 @@ public:
 		//Black Filter
 		/*cv::inRange(frame, cv::Scalar(0, 0, 0),
 						                      cv::Scalar(128, 128, 128), mask);*/
-        //Green Filter
-		cv::inRange(frame, cv::Scalar(0, 0, 160),
-						                        cv::Scalar(140, 140, 255), mask);
+        	//BGR	
+		cv::inRange(frame, cv::Scalar(marker_blue_min, marker_green_min, marker_red_min),
+				    cv::Scalar(marker_blue_max, marker_green_max, marker_red_max), mask);
         
 
 		Mat whiteImage(frame.rows, frame.cols, CV_8UC3, cv::Scalar(255, 255, 255));
@@ -223,10 +203,8 @@ public:
 		std::cout << ">>>>>>>> ARROW DETECTION\n";
 		Mat edges, output_image;
 
-		//	Canny( src_gray, edges, thresh, thresh*2 );
-		cv::Canny(frame, edges, 100, 150, 3, true);
-		
-		imshow( "Canny", edges );
+		cv::Canny(frame, edges, 100, 150, 3, true);		
+		// imshow( "Canny", edges );
 
 		/*
 		 * Contour detection
@@ -236,15 +214,8 @@ public:
 		vector<vector<Point> > contours, approx;
 		vector<Vec4i> hierarchy;
 		findContours( edges, contours, hierarchy, RETR_EXTERNAL , CHAIN_APPROX_SIMPLE );
-		/*
+		
 		for( size_t i = 0; i< contours.size(); i++ ) {
-			Scalar color = Scalar( 105, 105, 255 );
-//			Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
-			drawContours( drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0 );
-		}
-		*/
-		for( size_t i = 0; i< contours.size(); i++ ) {
-			std::cout << "ping\n";
 			vector<Point> tempApprox;
 			vector<int> hull;
 			double perimeter = cv::arcLength(contours[i], true);
@@ -255,40 +226,29 @@ public:
 			
 			for( size_t y = 0; y< tempApprox.size(); y++ ) {
 				Scalar color = Scalar( 255, 255, 255 );
-				//drawContours( drawing, tempApprox, (int)y, color, 2, LINE_8, hierarchy, 0 );
 				cv::circle(drawing, tempApprox[y], 4, color, -1);
 			}			
 
 			cv::convexHull(tempApprox, hull, false, false);
 			// Sort hull
 			std::sort(hull.begin(), hull.end());
-			std::cout << "pong1\n";
 
 			if ((hull.size()==5 ||  hull.size()==4) && (tempApprox.size() - hull.size()) == 2) { // It is an arrow, two inner points in the convex hull of 5 or 4 sides
-				
-				for (size_t y = 0; y < hull.size(); y++){
-					std::cout << hull[y]<<", ";
-				}
-				std::cout<<endl;
 				vector<int> indexes_tempApprox;
 				for (int i{0}; i < tempApprox.size(); ++i) indexes_tempApprox.push_back(i);
 				vector<int> indexes;
 				
 				std::set_difference(indexes_tempApprox.begin(), indexes_tempApprox.end(), hull.begin(), hull.end(), std::inserter(indexes, indexes.begin()));
-								
-				std::cout << "indexes: " << indexes[0] << ", " << indexes[1] << "\n";
 				
 				cv::circle(drawing, tempApprox[indexes[0]], 4, Scalar( 255, 0, 0 ), -1);
 				cv::circle(drawing, tempApprox[indexes[1]], 4, Scalar( 255, 0, 0 ), -1);
 				
-				std::cout << "pong2\n";
 				int tip_index = -1;
 				for (int it{0}; it < 2; ++it) {
 					// int x = (indexes[it] + 2) % hull.size();
 					int x = (indexes[it] + 2) % tempApprox.size();
 					//int j = (indexes[(it+1)%2] - 2) < 0 ?  (hull.size() - abs(indexes[(it+1)%2]  - 2) % hull.size()) : (indexes[(it+1)%2] - 2);
 					int j = ((indexes[(it + 1) % 2] - 2) < 0)? (tempApprox.size() + (indexes[(it + 1) % 2] - 2)) : (indexes[(it + 1) % 2] - 2);
-					std::cout << "X: "<<x<<", J:"<<j<<"\n";
 					if (j == x){
 						tip_index = j;						
 					}
@@ -297,7 +257,6 @@ public:
 					std::cout<<"Tip not found\n";
 					continue;
 				}
-				std::cout << "pong3\n";
 				
 				// Point middle_point
 				Point middle_point;
@@ -312,11 +271,8 @@ public:
 				}else {
 					middle_point = tempApprox[(tip_index + 3) % tempApprox.size()];
 				}
-				std::cout << "pong4\n";					
-				std::cout << "pong5\n";	
 				
 				approx.push_back(tempApprox);
-				std::cout << "pong6\n";	
 				
 				// Calculate the center of the arrow
 				Point center_of_arrow;
@@ -404,7 +360,7 @@ public:
 		std::cout<<">>>>Tips: "<<arrow_vector.size()<<std::endl;
 
 		for( size_t i = 0; i< arrow_vector.size(); i++ ) {
-			Scalar color = Scalar( 255, 0, 255 );
+			Scalar color = Scalar( 60, 170, 250 );
 			// cv::circle( drawing, arrow_vector[i].first, 5, color, -1);
 			cv::arrowedLine(drawing, arrow_vector[i].second, arrow_vector[i].first, color, 2);
 
@@ -416,62 +372,13 @@ public:
 
 	bool detectMarkers(cv::Mat &frame, std::vector<aurora::perception::VisualObject3D> &objects) {
 		std::cout << "[PluginMarkerDetectorArrows]::detectMarkers()" << std::endl;
-
-		Mat output_image;
-
-		enhaceImageQuality(frame);
-				
-		// colorQuantization(frame);
-		colorFilter(frame);
-				
-		//blobDetection(frame);
-		arrowDetection(frame, objects);
 		
-		output_image = frame;
-
-//		Mat edges;
-//	//	Canny( src_gray, edges, thresh, thresh*2 );
-//		cv::Canny(output_image, edges, 50, 200, 3);
-//
-//		/*
-//		 * Contour detection
-//		 */
-//		vector<vector<Point> > contours;
-//		vector<Vec4i> hierarchy;
-//		findContours( edges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE );
-//		std::cout<<"Contour size: "<<contours.size()<<std::endl;
-//
-//		Mat drawing = Mat::zeros( edges.size(), CV_8UC3 );
-//		for( size_t i = 0; i< contours.size(); i++ ) {
-//			Scalar color = Scalar( 105, 105, 255 );
-////			Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
-//			drawContours( drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0 );
-//		}
-//		imshow( "Contours", drawing );
-//
-//
-//		/*
-//		 * Line detection
-//		 * https://stackoverflow.com/questions/32476410/opencv-c-line-detection-with-houghlinesp
-//		 */
-//		// Copy edges to the images that will display the results in BGR
-//		cv::Mat edges_color, edges_image;
-//		cv::cvtColor(edges, edges_color, cv::COLOR_GRAY2BGR);
-//		edges_image = edges_color.clone();
-//
-//
-//		// Probabilistic Line Transform
-//		std::vector<Vec4i> linesP; // will hold the results of the detection
-//		HoughLinesP(edges, linesP, 1, CV_PI/180, 25, 15, 3 ); // runs the actual detection
-//		// Draw the lines
-//		for( size_t i = 0; i < linesP.size(); i++ ) {
-//			Vec4i l = linesP[i];
-//			line( edges_image, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 1, LINE_AA);
-//		}
-//
-//	    cv::imshow("global edges", edges_image);
-//	    cv::waitKey(60);
-
+		enhaceImageQuality(frame);				
+		// colorQuantization(frame);
+		colorFilter(frame);				
+		//blobDetection(frame);		
+		
+		arrowDetection(frame, objects);
 
 		return true;
 	}
@@ -479,8 +386,16 @@ public:
 protected:
 	VProperty<double> marker_size;	// [cm]
 	VProperty<bool> show_marker;
-
-private:
+	VProperty<int> marker_red_min;
+	VProperty<int> marker_red_max;
+	VProperty<int> marker_green_min;
+	VProperty<int> marker_green_max;
+	VProperty<int> marker_blue_min;
+	VProperty<int> marker_blue_max;
+	double focalLenght = 0.0021;
+	double cameraPixelSize = 2e-6;
+	double baseline = 0.12;
+private:	
 
 };
 
