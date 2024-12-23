@@ -344,9 +344,6 @@ class PluginMarkerDetectorArrows : public MarkerDetectorInterface {
   VProperty<int> marker_green_max;
   VProperty<int> marker_blue_min;
   VProperty<int> marker_blue_max;
-  double focalLenght = 0.0021;
-  double cameraPixelSize = 2e-6;
-  double baseline = 0.12;
 
  private:
 };
